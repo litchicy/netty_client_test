@@ -38,7 +38,7 @@ public class APP {
 
             Channel channel = channelFuture.channel();
 
-            for(int i = 0; i < 10; i++) {
+            for(int i = 0; i < 500; i++) {
 //                channel.writeAndFlush(Unpooled.copiedBuffer("dh236发给服务端循环信息中的第" + i + "条消息。", CharsetUtil.UTF_8));
                 myClientHandler.sendMessage(Unpooled.copiedBuffer("dh236发给服务端循环信息中的第" + i + "条消息。", CharsetUtil.UTF_8));
                 myClientHandler.waitForResponse();

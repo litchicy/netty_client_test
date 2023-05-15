@@ -1,5 +1,9 @@
 package org.example;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sun.org.apache.xalan.internal.utils.ConfigurationError;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -9,6 +13,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.CharsetUtil;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Hello world!
@@ -34,15 +42,22 @@ public class APP {
                     });
             System.out.println("客户端准备就绪，随时可以起飞~");
             //连接服务端
-            ChannelFuture channelFuture = bootstrap.connect("8.130.42.107", 2181).sync();
+            ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 2181).sync();
 
             Channel channel = channelFuture.channel();
+            Map<String, Object> map = new HashMap<>();
+            map.put("username", "admin");
+            map.put("password", "admin");
+            map.put("method", "login");
+            map.put("user_ip", "127.0.0.1");
 
-            for(int i = 0; i < 500; i++) {
+            String json = JSON.toJSONString(map, SerializerFeature.PrettyFormat, SerializerFeature.WriteNullListAsEmpty);
+
+//            for(int i = 0; i < 500; i++) {
 //                channel.writeAndFlush(Unpooled.copiedBuffer("dh236发给服务端循环信息中的第" + i + "条消息。", CharsetUtil.UTF_8));
-                myClientHandler.sendMessage(Unpooled.copiedBuffer("dh236发给服务端循环信息中的第" + i + "条消息。", CharsetUtil.UTF_8));
+                myClientHandler.sendMessage(Unpooled.copiedBuffer(json, CharsetUtil.UTF_8));
                 myClientHandler.waitForResponse();
-            }
+//            }
 
             //对通道关闭进行监听
             channel.closeFuture().sync();

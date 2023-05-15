@@ -20,13 +20,13 @@ public class CountTest {
         }
         reader.close();
 
-        System.out.println("该文件中共出现了 " + count + " 个“服务端接受到到了你的消息，并且往 223.112.31.29:5826回复了！！！”字段");
+        System.out.println("该文件中共出现了 " + count + " 个“服务端接受到到了你的消息，并且往 127.0.0.1:6965回复了！！！”字段");
     }
 
     private static int countMessagesInLine(String line) {
         int count = 0;
         int index = -1;
-        while ((index = line.indexOf("服务端接受到到了你的消息，并且往 223.112.31.29:5826回复了！！！", index + 1)) != -1) {
+        while ((index = line.indexOf("服务端接受到到了你的消息，并且往 127.0.0.1:6965回复了！！！", index + 1)) != -1) {
             count++;
         }
         return count;

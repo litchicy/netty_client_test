@@ -42,12 +42,12 @@ public class APP {
                     });
             System.out.println("客户端准备就绪，随时可以起飞~");
             //连接服务端
-            ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 2181).sync();
+            ChannelFuture channelFuture = bootstrap.connect("8.130.42.107", 2181).sync();
 
             Channel channel = channelFuture.channel();
             Map<String, Object> map = new HashMap<>();
             map.put("username", "admin");
-            map.put("password", "admin");
+            map.put("password", "admin1");
             map.put("method", "login");
             map.put("user_ip", "127.0.0.1");
 

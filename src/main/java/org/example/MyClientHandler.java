@@ -1,5 +1,6 @@
 package org.example;
 
+import com.alibaba.fastjson.JSONObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,6 +35,10 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
         //接收服务端发送过来的消息
         ByteBuf byteBuf = (ByteBuf) msg;
         System.out.println("收到服务端" + ctx.channel().remoteAddress() + "的消息：" + byteBuf.toString(CharsetUtil.UTF_8) + "\n");
+        JSONObject jsonObject = JSONObject.parseObject(byteBuf.toString(CharsetUtil.UTF_8));
+        System.out.println(jsonObject.getString("code"));
+        System.out.println(jsonObject.getString("message"));
+        System.out.println(jsonObject.getString("data"));
 //        收到服务器的消息的时候，将计数器减1
         latch.countDown();
     }

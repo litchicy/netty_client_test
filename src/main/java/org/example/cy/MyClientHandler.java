@@ -23,6 +23,8 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
         ctx.writeAndFlush(message);
     }
 
+    private String response;
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         //发送消息到服务端
@@ -36,6 +38,7 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
         ByteBuf byteBuf = (ByteBuf) msg;
         System.out.println("收到服务端" + ctx.channel().remoteAddress() + "的消息：" + byteBuf.toString(CharsetUtil.UTF_8) + "\n");
         JSONObject jsonObject = JSONObject.parseObject(byteBuf.toString(CharsetUtil.UTF_8));
+        this.response = byteBuf.toString(CharsetUtil.UTF_8);
         System.out.println(jsonObject.getString("code"));
         System.out.println(jsonObject.getString("message"));
         System.out.println(jsonObject.getString("data"));
@@ -45,9 +48,13 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
 
     public void waitForResponse() throws InterruptedException {
 //        在等待回应的操作中，调用await方法进行等待，直到计数器为0，即可收到服务端的回应
-        boolean success = latch.await(1, TimeUnit.SECONDS);
+        boolean success = latch.await(10, TimeUnit.SECONDS);
         if (!success) {
             System.out.println("丢失了服务器的返回的一条消息！！！ \n");
         }
+    }
+
+    public String getResponse() {
+        return this.response;
     }
 }

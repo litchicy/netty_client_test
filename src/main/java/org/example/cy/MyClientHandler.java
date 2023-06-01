@@ -18,7 +18,7 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
     private CountDownLatch latch;
 
     public void sendMessage(Object message) {
-//        发送消息的时候，将计数器的设置为1
+//        发送消息的时候，将计数器的设置为1。
         latch = new CountDownLatch(1);
         ctx.writeAndFlush(message);
     }

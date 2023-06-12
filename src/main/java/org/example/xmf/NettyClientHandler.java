@@ -12,6 +12,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +59,9 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
         this.response = byteBuf.toString(CharsetUtil.UTF_8);
         System.out.println(byteBuf.toString(CharsetUtil.UTF_8));
         JSONObject jsonObject = JSONObject.parseObject(byteBuf.toString(CharsetUtil.UTF_8));
+        System.out.println(date());
+        Thread.sleep(10000);
+        System.out.println(date());
         String code = jsonObject.getString("code");
         if(!code.equals("200")) {
             Map<String, String> map = updateModelData(byteBuf);
@@ -88,7 +92,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
     public void waitForResponse() throws InterruptedException
     {
         // 在等待回应的操作中，调用await方法进行等待，直到计数器为0，即可收到服务端的回应
-        boolean success = latch.await(10, TimeUnit.SECONDS);
+        boolean success = latch.await(20, TimeUnit.SECONDS);
         if (!success)
         {
             System.out.println("丢失了服务器的返回的一条消息！！！ \n");
@@ -111,7 +115,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
         String code = jsonObject.getString("code");
         Map<String, String> resMap = new HashMap<>();
         resMap.put("method", "responseModifyModelData");
-        if(code.equals("410001")) {
+        if(code.equals("4100")) {
             resMap.put("response", "success");
             return resMap;
         }

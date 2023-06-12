@@ -43,7 +43,7 @@ public class Test
                     protected void initChannel(SocketChannel socketChannel) throws Exception
                     {
                         ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addLast(new IdleStateHandler(0, 1, 0, TimeUnit.SECONDS));
+                        pipeline.addLast(new IdleStateHandler(0, 10, 0, TimeUnit.SECONDS));
                         pipeline.addLast("handler", nettyClientHandler);
                     }
                 });
@@ -54,7 +54,6 @@ public class Test
         ChannelFuture channelFuture = bootstrap.connect(serverIP, serverPort).sync();
         nettyClientHandler.sendMessage();
         nettyClientHandler.waitForResponse();
-
         // System.out.println(nettyClientHandler.getResponse());
         JSONObject jsonResponse = JSONObject.parseObject(nettyClientHandler.getResponse());
         int code = jsonResponse.getInteger("code");

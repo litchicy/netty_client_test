@@ -44,7 +44,7 @@ public class APP {
                     });
             System.out.println("客户端准备就绪，随时可以起飞~");
             //连接服务端
-            ChannelFuture channelFuture = bootstrap.connect("8.130.42.107", 2181).sync();
+            ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 2181).sync();
 
             Channel channel = channelFuture.channel();
             Map<String, Object> map = new HashMap<>();

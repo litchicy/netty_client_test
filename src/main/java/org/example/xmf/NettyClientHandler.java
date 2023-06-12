@@ -1,5 +1,8 @@
 package org.example.xmf;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,6 +13,8 @@ import io.netty.util.CharsetUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +56,15 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
         ByteBuf byteBuf = (ByteBuf) msg;
         // System.out.println("收到服务端" + ctx.channel().remoteAddress() + "的消息：" + byteBuf.toString(CharsetUtil.UTF_8) + "\n");
         this.response = byteBuf.toString(CharsetUtil.UTF_8);
+        System.out.println(byteBuf.toString(CharsetUtil.UTF_8));
+        JSONObject jsonObject = JSONObject.parseObject(byteBuf.toString(CharsetUtil.UTF_8));
+        String code = jsonObject.getString("code");
+        if(!code.equals("200")) {
+            Map<String, String> map = updateModelData(byteBuf);
+            String updateRes = JSON.toJSONString(map, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue,
+                    SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteNullListAsEmpty);
+            ctx.writeAndFlush(Unpooled.copiedBuffer(updateRes, CharsetUtil.UTF_8));
+        }
         // 收到服务器的消息的时候，将计数器减1
         latch.countDown();
         System.out.println("channel status-2: " + ctx.channel().isActive());
@@ -90,5 +104,18 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
+    }
+
+    private Map<String, String> updateModelData(ByteBuf byteBuf) {
+        JSONObject jsonObject = JSONObject.parseObject(byteBuf.toString(CharsetUtil.UTF_8));
+        String code = jsonObject.getString("code");
+        Map<String, String> resMap = new HashMap<>();
+        resMap.put("method", "responseModifyModelData");
+        if(code.equals("410001")) {
+            resMap.put("response", "success");
+            return resMap;
+        }
+        resMap.put("response", "error");
+        return resMap;
     }
 }
